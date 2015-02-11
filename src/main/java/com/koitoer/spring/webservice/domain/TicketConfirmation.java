@@ -39,4 +39,17 @@ public final class TicketConfirmation {
     public float getAmount() {
         return amount;
     }
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "TicketConfirmation [confirmationId=" + confirmationId
+				+ ", filmId=" + filmId + ", quantity=" + quantity
+				+ ", sessionDate=" + sessionDate + ", amount=" + amount + "]";
+	}
+    
+    
 }

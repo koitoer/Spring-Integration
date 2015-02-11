@@ -9,13 +9,13 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
 	<!-- Detects @Endpoint since it is a specialization of @Component -->
-	<context:component-scan base-package="com.koitoer.spring.webservices"/>
+	<context:component-scan base-package="com.koitoer.spring.webservice"/>
 	
 	<!-- detects @PayloadRoot -->
 	<ws:annotation-driven/>
 	
-	<ws:dynamic-wsdl id="ticketDefinition" portTypeName="Tickets" 
-	                 locationUri="http://localhost:8080/spring-ws-tickets">
+	<ws:dynamic-wsdl id="ticketDefinition" portTypeName="tickets" 
+	                 locationUri="http://localhost:8080/spring-webservices">
 		<ws:xsd location="/WEB-INF/schemas/xsd/ticket-service.xsd"/>
 	</ws:dynamic-wsdl>
 </beans>
