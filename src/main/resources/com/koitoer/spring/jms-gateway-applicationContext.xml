@@ -31,7 +31,7 @@
     	<constructor-arg value="to.async.jms.queue"/>
 	</bean>
  
-	<!-- Listeners -->
+	<!-- Listeners that run and MDB mocking external system -->
 	<jms:listener-container connection-factory="connectionFactory">
 	    <jms:listener destination="to.async.jms.queue" ref="asyncConsumer"/>
 	</jms:listener-container>

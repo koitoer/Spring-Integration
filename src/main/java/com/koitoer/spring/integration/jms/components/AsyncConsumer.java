@@ -27,6 +27,7 @@ public class AsyncConsumer implements MessageListener {
 
 	@Override
 	public void onMessage(final Message order) {
+		System.out.println("Order is received in the external system ready to send back the response");
 		final Message msgOrder = order;
 		TicketOrder orderObject;
 		try {
