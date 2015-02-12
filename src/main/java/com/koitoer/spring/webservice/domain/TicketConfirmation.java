@@ -1,9 +1,10 @@
 package com.koitoer.spring.webservice.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public final class TicketConfirmation {
+public final class TicketConfirmation implements Serializable {
 
 	private String confirmationId;
 	private String filmId;
@@ -14,6 +15,15 @@ public final class TicketConfirmation {
 	public TicketConfirmation(final String filmId, final Date sessionDate, final int quantity, final float amount) {
 		this.confirmationId = UUID.randomUUID().toString();
 		this.filmId = filmId;
+		this.sessionDate = new Date(sessionDate.getTime());
+		this.quantity = quantity;
+		this.amount = amount;
+	}
+
+	public TicketConfirmation(final String confirmationId, final int filmId, final Date sessionDate,
+			final int quantity, final float amount) {
+		this.confirmationId = confirmationId;
+		this.filmId = String.valueOf(filmId);
 		this.sessionDate = new Date(sessionDate.getTime());
 		this.quantity = quantity;
 		this.amount = amount;

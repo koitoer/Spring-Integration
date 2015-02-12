@@ -41,6 +41,13 @@ public class TicketProcessor {
 		orderRepository.confirmOrder(confirmation);
 	}
 
+	/**
+	* @param confirmation
+	*/
+	public void registerOrderConfirmation(final TicketConfirmation confirmation) {
+		orderRepository.confirmOrder(confirmation);
+	}
+
 	private boolean isInvalidOrder(final TicketOrder order) {
 		if (order.getFilmId() == -1) {
 			return true;
