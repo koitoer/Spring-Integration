@@ -13,10 +13,14 @@ import com.koitoer.spring.integration.jms.domain.TicketOrder;
  *
  */
 public class SyncConsumer {
-    @Autowired
-    private JmsTemplate jmsTemplate;
-     
-    public TicketOrder receive() {
-        return (TicketOrder) jmsTemplate.receiveAndConvert("test.sync.queue");
-    }
+
+	@Autowired
+	private JmsTemplate jmsTemplate;
+
+	/**
+	 * @return
+	 */
+	public TicketOrder receive() {
+		return (TicketOrder) jmsTemplate.receiveAndConvert("test.sync.queue");
+	}
 }

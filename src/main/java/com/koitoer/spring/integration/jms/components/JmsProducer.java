@@ -14,15 +14,23 @@ import com.koitoer.spring.integration.jms.domain.TicketOrder;
  *
  */
 public class JmsProducer {
-    @Autowired
-    @Qualifier("jmsTemplate")
-    private JmsTemplate jmsTemplate;
-     
-    public void convertAndSendMessage(TicketOrder order) {
-        jmsTemplate.convertAndSend(order);
-    }
-     
-    public void convertAndSendMessage(String destination, TicketOrder order) {
-        jmsTemplate.convertAndSend(destination, order);
-    }
+
+	@Autowired
+	@Qualifier("jmsTemplate")
+	private JmsTemplate jmsTemplate;
+
+	/**
+	 * @param order
+	 */
+	public void convertAndSendMessage(final TicketOrder order) {
+		jmsTemplate.convertAndSend(order);
+	}
+
+	/**
+	 * @param destination
+	 * @param order
+	 */
+	public void convertAndSendMessage(final String destination, final TicketOrder order) {
+		jmsTemplate.convertAndSend(destination, order);
+	}
 }

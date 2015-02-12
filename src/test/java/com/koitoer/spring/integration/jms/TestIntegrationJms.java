@@ -11,39 +11,41 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.koitoer.spring.integration.jms.components.JmsProducer;
-import com.koitoer.spring.integration.jms.components.SyncConsumer;
+import com.koitoer.spring.integration.jms.components.OrderRepository;
 import com.koitoer.spring.integration.jms.domain.TicketOrder;
+import com.koitoer.spring.webservice.domain.TicketConfirmation;
 
 /**
  * @author mauricio.mena
  * @since 11/02/2015
  *
  */
-@ContextConfiguration(locations = { "classpath:com/koitoer/spring/jmsConfig-applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath:com/koitoer/spring/jms-applicationContext.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TestJmsConfig {
+public class TestIntegrationJms {
 
 	@Autowired
 	private JmsProducer producer;
 
 	@Autowired
-	private SyncConsumer consumer;
+	private OrderRepository repository;
 
 	/**
 	 * @throws InterruptedException
 	 * @throws RemoteException
 	 */
 	@Test
-	public void testReceiving() throws InterruptedException, RemoteException {
+	public void testSendToIntegration() throws InterruptedException, RemoteException {
 		final TicketOrder order = new TicketOrder(1, 5, new Date());
 		// Sends the message to the jmsTemplate's default destination
-		producer.convertAndSendMessage(order);
+		producer.convertAndSendMessage("int.sync.queue", order);
 
-		Thread.sleep(2000);
+		Thread.sleep(10000);
 
-		final TicketOrder receivedOrder = consumer.receive();
-		Assert.assertNotNull(receivedOrder);
-		Assert.assertEquals(1, receivedOrder.getFilmId());
-		Assert.assertEquals(5, receivedOrder.getQuantity());
+		Assert.assertEquals(1, repository.getConfirmations().size());
+		Assert.assertNotNull(repository.getConfirmations().get(0));
+		final TicketConfirmation conf = repository.getConfirmations().get(0);
+		System.out.println("Obtain ticketConfirmation : " + conf);
+		Assert.assertNotNull("123", conf.getConfirmationId());
 	}
 }
