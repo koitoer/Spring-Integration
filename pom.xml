@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.samples</groupId>
-  <artifactId>spring-webservices</artifactId>
+  <artifactId>spring-integration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   
@@ -159,7 +159,7 @@
 	</dependencies>	
 	
 	 <build>
-	    <finalName>spring-webservices</finalName>
+	    <finalName>spring-integration</finalName>
 	    <pluginManagement>
 		    <plugins>
 				<plugin>
@@ -181,7 +181,7 @@
 			        <artifactId>tomcat7-maven-plugin</artifactId>
 			        <version>2.0</version>
 			        <configuration>
-			          <url>http://localhost:8080/spring-webservices</url>
+			          <url>http://localhost:8080/spring-integration</url>
 			        </configuration>
 		    	</plugin>
 		    	

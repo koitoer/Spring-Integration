@@ -16,49 +16,65 @@ import com.koitoer.spring.webservice.domain.TicketResponse;
 import com.koitoer.spring.webservice.service.TicketService;
 import com.koitoer.spring.webservice.util.DateUtils;
 
+/**
+ * @author mauricio.mena
+ * @since 11/02/2015
+ *
+ */
 @Endpoint
 public class TicketEndpoint {
- 
-	public TicketEndpoint(){
-		System.out.println("ACCESS");
+
+	/**
+	 * 
+	 */
+	public TicketEndpoint() {
+		System.out.println("Creating TicketEndpoint");
 	}
-	
-    @Autowired
-    private TicketService ticketService;
-    
+
+	@Autowired
+	private TicketService ticketService;
+
 	private int retries;
-     
-    //http://localhost:8080/spring-webservices/tickets/ticketDefinition.wsdl
-    @PayloadRoot(localPart="ticketRequest", namespace="http://integration.webservice.koitoer.com/tickets")
-    public @ResponsePayload TicketResponse order(@RequestPayload TicketRequest ticketRequest) throws InterruptedException {
-        Calendar sessionDate = Calendar.getInstance();
-        sessionDate.set(2013, 9, 26);
-         
-        TicketConfirmation confirmation = ticketService.order(
-                ticketRequest.getFilmId(), DateUtils.toDate(ticketRequest.getSessionDate()), ticketRequest.getQuantity().intValue());
-         
-        retries++;
-        if (retries < 3) {
-            throw new RuntimeException("not enough retries");
-        }
-        else {
-            retries = 0;
-        }
-        
-        System.out.println("System response : "  + confirmation);
-        return buildResponse(confirmation);
-    }
-     
-    private TicketResponse buildResponse(TicketConfirmation confirmation) {
-        TicketResponse response = new TicketResponse();
-        response.setConfirmationId(confirmation.getConfirmationId());
-        response.setFilmId(confirmation.getFilmId());
-        response.setSessionDate(DateUtils.convertDate(confirmation.getSessionDate()));
-        BigInteger quantity = new BigInteger(Integer.toString(confirmation.getQuantity()));
-        response.setQuantity(quantity);
-        BigDecimal amount = new BigDecimal(Float.toString(confirmation.getAmount()));
-        response.setAmount(amount);
-         
-        return response;
-    }
+
+	/**
+	 * http://localhost:8080/spring-integration/tickets/ticketDefinition.wsdl
+	 * @param ticketRequest
+	 * @return TicketResponse
+	 * @throws InterruptedException
+	 */
+	@PayloadRoot(localPart = "ticketRequest", namespace = "http://integration.webservice.koitoer.com/tickets")
+	public @ResponsePayload
+	TicketResponse order(@RequestPayload final TicketRequest ticketRequest) throws InterruptedException {
+		final Calendar sessionDate = Calendar.getInstance();
+		sessionDate.set(2013, 9, 26);
+
+		final TicketConfirmation confirmation =
+				ticketService.order(
+						ticketRequest.getFilmId(), DateUtils.toDate(ticketRequest.getSessionDate()), ticketRequest
+								.getQuantity().intValue());
+
+		retries++;
+		if (retries < 3) {
+			throw new RuntimeException("not enough retries");
+		}
+		else {
+			retries = 0;
+		}
+
+		System.out.println("System response : " + confirmation);
+		return buildResponse(confirmation);
+	}
+
+	private TicketResponse buildResponse(final TicketConfirmation confirmation) {
+		final TicketResponse response = new TicketResponse();
+		response.setConfirmationId(confirmation.getConfirmationId());
+		response.setFilmId(confirmation.getFilmId());
+		response.setSessionDate(DateUtils.convertDate(confirmation.getSessionDate()));
+		final BigInteger quantity = new BigInteger(Integer.toString(confirmation.getQuantity()));
+		response.setQuantity(quantity);
+		final BigDecimal amount = new BigDecimal(Float.toString(confirmation.getAmount()));
+		response.setAmount(amount);
+
+		return response;
+	}
 }
