@@ -20,9 +20,11 @@
     	<constructor-arg value="int.sync.queue"/>
 	</bean>
 
+	<int-jms:message-driven-channel-adapter id="jmsAdapter" destination="toIntQueue" channel="jmsChannel" />
 	
-	<int-jms:inbound-channel-adapter id="jmsAdapter" channel="jmsChannel" destination="toIntQueue"/>
- 
+	<!-- Commented line below to use inboud with poller for active reception
+		<int-jms:inbound-channel-adapter id="jmsAdapter" channel="jmsChannel" destination="toIntQueue"/>
+ 	-->
 	<int:channel id="jmsChannel"/>
  
 	<int:service-activator method="processOrder" input-channel="jmsChannel" ref="ticketProcessor"/>

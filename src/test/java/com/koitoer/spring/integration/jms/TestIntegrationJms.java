@@ -45,7 +45,7 @@ public class TestIntegrationJms {
 		Assert.assertEquals(1, repository.getConfirmations().size());
 		Assert.assertNotNull(repository.getConfirmations().get(0));
 		final TicketConfirmation conf = repository.getConfirmations().get(0);
-		System.out.println("Obtain ticketConfirmation : " + conf);
+		System.out.println("Obtain ticketConfirmation in client : " + conf);
 		Assert.assertNotNull("123", conf.getConfirmationId());
 	}
 }
