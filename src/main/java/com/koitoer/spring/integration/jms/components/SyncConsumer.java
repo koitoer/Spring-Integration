@@ -23,4 +23,12 @@ public class SyncConsumer {
 	public TicketOrder receive() {
 		return (TicketOrder) jmsTemplate.receiveAndConvert("test.sync.queue");
 	}
+
+	/**
+	 * @param queue 
+	 * @return
+	 */
+	public TicketOrder receive(final String queue) {
+		return (TicketOrder) jmsTemplate.receiveAndConvert(queue);
+	}
 }

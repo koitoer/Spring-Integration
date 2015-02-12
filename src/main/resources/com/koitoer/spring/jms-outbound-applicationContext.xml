@@ -13,19 +13,14 @@
 	
 	<import resource="classpath:com/koitoer/spring/jmsConfig-applicationContext.xml"/>
 	 
-	<bean id="toIntQueue" class="org.apache.activemq.command.ActiveMQQueue">
-    	<constructor-arg value="int.sync.queue"/>
+	<bean id="toJmsQueue" class="org.apache.activemq.command.ActiveMQQueue">
+    	<constructor-arg value="to.jms.queue"/>
 	</bean>
 
-	<int-jms:message-driven-channel-adapter id="jmsAdapter" destination="toIntQueue" channel="jmsChannel" />
-	
-	<!-- Commented line below to use inboud with poller for active reception
-		<int-jms:inbound-channel-adapter id="jmsAdapter" channel="jmsChannel" destination="toIntQueue"/>
- 	-->
-	<int:channel id="jmsChannel"/>
+	<int:gateway default-request-channel="requestChannel"
+    	service-interface="com.koitoer.spring.integration.jms.service.TicketService"/>
+     
+	<int:channel id="requestChannel"/>
  
-	<int:service-activator method="processOrder" input-channel="jmsChannel" ref="ticketProcessor"/>
- 
-	<int:poller id="poller" default="true" fixed-delay="1000"/>
-	
+	<int-jms:outbound-channel-adapter id="jmsAdapter" channel="requestChannel" destination="toJmsQueue"/>
 </beans>
