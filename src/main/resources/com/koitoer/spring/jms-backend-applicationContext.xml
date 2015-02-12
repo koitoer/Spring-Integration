@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws-3.0.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.2.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
+		http://www.springframework.org/schema/integration/jms http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<import resource="classpath:com/koitoer/spring/jmsConfig-applicationContext.xml"/>
+	 
+	<int:gateway id="inGateway" default-request-channel="requestChannel"
+    	service-interface="com.koitoer.spring.integration.jms.service.TicketService"/>
+     
+	<int:channel id="requestChannel"/>
+ 
+	<int:service-activator method="sendJms" input-channel="requestChannel" 
+		output-channel="jmsChannel" ref="ticketProcessor"/>
+ 
+ 	<!-- JMS channel could be configured to use destination resolver -->
+	<int-jms:channel id="jmsChannel" queue="syncTestQueue"/>
+	
+ 
+	<int:service-activator method="receiveJms" input-channel="jmsChannel" ref="ticketProcessor"/>
+	
+	
+</beans>

@@ -48,6 +48,28 @@ public class TicketProcessor {
 		orderRepository.confirmOrder(confirmation);
 	}
 
+	/**
+	 * @param order
+	 * @return
+	 */
+	public TicketOrder sendJms(final TicketOrder order) {
+		TicketProcessor.logger.info("Sending order {}", order.getFilmId());
+		return order;
+	}
+
+	/**
+	 * @param order
+	 */
+	public void receiveJms(final TicketOrder order) {
+		TicketProcessor.logger.info("Processing order {}", order.getFilmId());
+
+		final float amount = 5.95f * order.getQuantity();
+
+		final TicketConfirmation confirmation =
+				new TicketConfirmation("123", order.getFilmId(), order.getOrderDate(), order.getQuantity(), amount);
+		orderRepository.confirmOrder(confirmation);
+	}
+
 	private boolean isInvalidOrder(final TicketOrder order) {
 		if (order.getFilmId() == -1) {
 			return true;
