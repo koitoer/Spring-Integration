@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:core="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+ 
+ 	<context:component-scan base-package="com.koitoer.spring.integration.rabbitmq"/>
+ 
+    <rabbit:connection-factory id="connectionFactory" />
+     
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" />
+     
+    <rabbit:admin connection-factory="connectionFactory" />
+     
+    <rabbit:queue name="rabbit.queue" />
+     
+    <rabbit:direct-exchange name="rabbit.exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="rabbit.queue" key="rabbit.key.binding" />
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+</beans>

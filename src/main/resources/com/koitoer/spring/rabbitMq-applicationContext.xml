@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		 http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd">
+ 
+ 	<import resource="classpath:com/koitoer/spring/rabbitMqConfig-applicationContext.xml"/>
+ 	
+	<int:gateway default-request-channel="requestChannel"
+        service-interface="com.koitoer.spring.integration.rabbitmq.AMQPService"/>
+         
+    <int:channel id="requestChannel"/>
+     
+    <int-amqp:outbound-channel-adapter
+        channel="requestChannel" amqp-template="amqpTemplate" exchange-name="rabbit.exchange"
+        routing-key="rabbit.key.binding"/>
+     
+    <int-amqp:inbound-channel-adapter channel="responseChannel"
+        queue-names="rabbit.queue" connection-factory="connectionFactory" />
+     
+    <int:channel id="responseChannel"/>
+     
+    <int:service-activator ref="amqpProcessor" method="process" input-channel="responseChannel"/>
+    
+</beans>

@@ -24,6 +24,7 @@
 		output-channel="jmsChannel" ref="ticketProcessor"/>
  
  	<!-- JMS channel could be configured to use destination resolver -->
+ 	<!-- This makes possible to use transactions, there are channel and publish-subscribe-channels -->
 	<int-jms:channel id="jmsChannel" queue="syncTestQueue"/>
 	
  
