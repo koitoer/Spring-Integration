@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-jmx="http://www.springframework.org/schema/integration/jmx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/integration/jmx http://www.springframework.org/schema/integration/jmx/spring-integration-jmx-3.0.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd">
+	
+	<context:component-scan base-package="com.koitoer.spring.integration.jmx"/>
+	     
+	<context:mbean-export/>
+	<context:mbean-server/>
+ 
+	<!-- Sending Notifications -->
+	<int:gateway service-interface="com.koitoer.spring.integration.jmx.notification.JmxNotificationGateway" 
+		default-request-channel="entryChannel"/>
+	 
+	<int:channel id="entryChannel"/>
+ 
+	<int:service-activator input-channel="entryChannel" output-channel="sendNotificationChannel"
+    	ref="notificationHandler" method="buildNotification"/>
+ 
+	<int:channel id="sendNotificationChannel"/>
+ 
+	<int-jmx:notification-publishing-channel-adapter channel="sendNotificationChannel"
+    	object-name="com.koitoer.spring.integration.jmx.adapter:type=integrationMBean,name=integrationMbean"/>
+	
+	<!-- Receiving Notifications -->
+	<int-jmx:notification-listening-channel-adapter channel="receiveNotificationChannel"
+    object-name="com.koitoer.spring.integration.jmx.adapter:type=integrationMBean,name=integrationMbean"/>
+    
+	<int:channel id="receiveNotificationChannel"/>
+ 
+	<int:service-activator input-channel="receiveNotificationChannel"
+    	ref="notificationHandler" method="receive"/>
+    
+</beans>
