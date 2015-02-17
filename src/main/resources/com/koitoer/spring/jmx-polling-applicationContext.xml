@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-jmx="http://www.springframework.org/schema/integration/jmx"
+	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/integration/jmx http://www.springframework.org/schema/integration/jmx/spring-integration-jmx-3.0.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd">
+	
+	<context:component-scan base-package="com.koitoer.spring.integration.jmx"/>
+	     
+	<context:mbean-export/>
+	<context:mbean-server/>
+ 
+	<!-- Polling -->
+	<int-jmx:attribute-polling-channel-adapter channel="resultChannel"
+	        object-name="com.koitoer.spring.integration.jmx.mbean:type=JmxPollingMBean,name=pollingMbean"
+	        attribute-name="Number">
+	    <int:poller max-messages-per-poll="1" fixed-delay="1000"/>
+	</int-jmx:attribute-polling-channel-adapter>
+	 
+	<int:channel id="resultChannel"/>
+	 
+	<int-stream:stdout-channel-adapter channel="resultChannel" append-newline="true"/>
+	
+	<!-- Invoking operation -->
+	
+	<int:gateway id="jmxOperationGateway" service-interface="com.koitoer.spring.integration.jmx.notification.JmxNotificationGateway"
+	default-request-channel="entryChannel" />
+ 
+	<int-jmx:operation-invoking-outbound-gateway request-channel="entryChannel" reply-channel="replyChannel"
+	    object-name="com.koitoer.spring.integration.jmx.mbean:type=JmxOperationMBean,name=operationMbean"
+	    operation-name="hello"/>
+ 
+	<int:channel id="replyChannel"/>
+	 
+	<int-stream:stdout-channel-adapter channel="replyChannel" append-newline="true"/>
+    
+    <!--
+    	Using MBean exporter 
+		Add this to JVM configuration
+		-Dcom.sun.management.jmxremote
+		-Dcom.sun.management.jmxremote.port=6969
+		-Dcom.sun.management.jmxremote.ssl=false
+		-Dcom.sun.management.jmxremote.authenticate=false
+	 -->
+    <int-jmx:mbean-export id="integrationMBeanExporter"
+    	default-domain="com.koitoer.spring.integration.jmx.mbean" server="mbeanServer"/>
+ 
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+	    <property name="locateExistingServerIfPossible" value="true"/>
+	</bean>
+	
+
+</beans>
