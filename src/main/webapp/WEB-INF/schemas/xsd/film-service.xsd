@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	targetNamespace="http://integration.webservice.koitoer.com/films" version="1.0">
+
+  <xs:element name="filmResponse" >
+  	<xs:complexType>
+    	<xs:sequence>
+	      <xs:element minOccurs="0" name="id" type="xs:integer"/>
+	      <xs:element minOccurs="0" name="name" type="xs:string"/>
+	      <xs:element minOccurs="0" name="showtime" type="xs:string"/>
+    	</xs:sequence>
+  	</xs:complexType>
+  </xs:element>
+  
+
+</xs:schema>

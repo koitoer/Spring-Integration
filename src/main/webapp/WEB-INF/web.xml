@@ -25,4 +25,19 @@
         <servlet-name>Ticket Servlet</servlet-name>
         <url-pattern>/tickets/*</url-pattern>
     </servlet-mapping>
+    
+	<servlet>
+	    <servlet-name>Films Servlet</servlet-name>
+	    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	    <init-param>
+	      <param-name>contextConfigLocation</param-name>
+	      <param-value>classpath:com/koitoer/spring/web-servlet-config.xml</param-value>
+	    </init-param>
+	    <load-on-startup>1</load-on-startup>
+	</servlet>
+	 
+	<servlet-mapping>
+	    <servlet-name>Films Servlet</servlet-name>
+	    <url-pattern>/webtickets/*</url-pattern>
+	</servlet-mapping>
 </web-app>

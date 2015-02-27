@@ -4,13 +4,30 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:core="http://activemq.apache.org/schema/core"
 	xmlns:int="http://www.springframework.org/schema/integration"
-	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
+	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xmlns:int-http="http://www.springframework.org/schema/integration/http"
+	xmlns:int-ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:int-mongodb="http://www.springframework.org/schema/integration/mongodb"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xmlns:int-event="http://www.springframework.org/schema/integration/event"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-3.0.xsd
+		http://www.springframework.org/schema/integration/ws http://www.springframework.org/schema/integration/ws/spring-integration-ws-3.0.xsd
+		http://www.springframework.org/schema/integration/mail http://www.springframework.org/schema/integration/mail/spring-integration-mail-3.0.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
 		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-3.0.xsd
+		http://www.springframework.org/schema/integration/event http://www.springframework.org/schema/integration/event/spring-integration-event-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration/mongodb http://www.springframework.org/schema/integration/mongodb/spring-integration-mongodb-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
+	<import resource="mongodb-config.xml"/>
+	<import resource="mail-config.xml"/>
 
-	<context:component-scan base-package="com.koitoer.spring.integration.cinema"/>
+	<context:component-scan base-package="com.koitoer.spring.integration.cinema">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.ws.server.endpoint.annotation.Endpoint"/>
+	</context:component-scan>
 	
 	<!-- System entry -->
 	<int-stream:stdin-channel-adapter id="consoleIn" channel="systemEntry">
@@ -41,4 +58,40 @@
 	<int:channel id="validEntriesChannel" />
 	<int:router input-channel="validEntriesChannel" ref="cinemaRedirector"/>
 
+
+	<!-- Egyptian Theater request -->
+	<int:chain input-channel="egyptianRequestChannel">
+	    <int-http:outbound-gateway url="http://localhost:8080/spring-webservices/webtickets/films"
+	        expected-response-type="java.lang.String" http-method="GET" charset="UTF-8"/>
+	    <int:json-to-object-transformer type="com.koitoer.spring.integration.example.cinema.domain.Film[]"/>
+	    <int:service-activator ref="restResponseHandler"/>
+	    <int-stream:stdout-channel-adapter id="consoleOut" append-newline="true" />
+	</int:chain>
+	
+	<!-- Pantages Theater request -->
+	<int:chain input-channel="pantagesRequestChannel">
+	    <int:transformer ref="soapRequestTransformer"/>
+	    <int-ws:outbound-gateway uri="http://localhost:8080/spring-webservices/tickets"
+	        marshaller="marshaller" unmarshaller="marshaller"/>
+	    <int:service-activator ref="soapResponseHandler"/>
+	    <int-stream:stdout-channel-adapter id="consoleOut" append-newline="true" />
+	</int:chain>
+
+
+	<int:chain input-channel="errorChannel">
+	    <int:service-activator ref="mongodbRequestHandler"/>
+	    <int-mongodb:outbound-channel-adapter id="mongodbAdapter" collection-name="failedRequests" mongodb-factory="mongoDbFactory" />
+	</int:chain>
+	
+	<int:chain input-channel="errorChannel">
+    	<int:service-activator ref="mailRequestHandler"/>
+    	<int-mail:outbound-channel-adapter mail-sender="mailSender" />
+	</int:chain>
+	
+	<!-- Quit message (shutdown application) -->
+	<int:chain input-channel="quitRequestChannel">
+	    <int:service-activator ref="shutdownActivator"/>
+	    <int-event:outbound-channel-adapter/>
+	</int:chain>
+	
 </beans>
