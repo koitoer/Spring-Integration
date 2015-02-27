@@ -1,4 +1,4 @@
-package com.koitoer.spring.integratio;
+package com.koitoer.spring.integration;
 
 import java.math.BigInteger;
 import java.util.Date;
